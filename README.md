@@ -1,5 +1,7 @@
 # Kubernetes Homelab Setup
 
+The following project implements Infrastructure as Code (IaC) using Terraform to deploy EC2 instances on Localstack, an cloud emulator for AWS. These EC2 instances will be used to build a Kubernets cluster.
+
 ## Requirements
 
 Install [Docker Engine](https://docs.docker.com/engine/install) & LocalStack CLI:
@@ -17,10 +19,16 @@ Install `python` & `uv` for [awslocal](https://github.com/localstack/awscli-loca
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 mise use -g python@3.14 uv@latest
-mise use -g pipx:awscli-local[ver1] pipx:awscli
+mise use -g pipx:awscli-local pipx:awscli
 ```
 
-Install Terraform or OpenTofu (see available packages on you system) & [tflocal](https://docs.localstack.cloud/aws/integrations/infrastructure-as-code/terraform/#tflocal-wrapper-script). For OpenTofu compatibility, export the environment variable `TF_CMD=tofu`.
+Install Terraform or OpenTofu (see available packages on you system) & [tflocal](https://docs.localstack.cloud/aws/integrations/infrastructure-as-code/terraform/#tflocal-wrapper-script):
+
+```sh
+mise use -g pipx:terraform-local
+```
+
+For OpenTofu compatibility, export the environment variable `TF_CMD=tofu`.
 
 ## Configure The Environment
 
@@ -34,5 +42,5 @@ export TF_CMD=tofu
 cd iac/
 tflocal init -upgrade
 tflocal plan -out=plan.out
-tflocal apply
+tflocal apply plan.out
 ```
