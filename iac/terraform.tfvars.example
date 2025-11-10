@@ -1,1 +1,3 @@
-cluster_name = "dev_platform"
+passphrase    = "REDACTED"
+cluster_name  = "dev-platform"
+cluster_token = "REDACTED"

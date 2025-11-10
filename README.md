@@ -41,7 +41,15 @@ localstack start -d
 
 docker pull ubuntu:24.04
 awslocal ec2 register-image --name "ubuntu-noble" --image-location "ubuntu:24.04"
-awslocal ec2 create-tags --resources <AMI_ID> --tags Key=ec2_vm_manager,Value=docker
+awslocal ec2 create-tags --resources AMI_ID --tags Key=ec2_vm_manager,Value=docker
+```
+
+Fill-in required Terraform variables. You can generate the shared secret (token) with `openssl rand -hex 32`. The passphrase must be at least `16` characters long:
+
+```hcl
+passphrase    = "REDACTED"
+cluster_name  = "CLUSTER_NAME"
+cluster_token = "REDACTED"
 ```
 
 Provision the infrastructure (we assume OpenTofu):
