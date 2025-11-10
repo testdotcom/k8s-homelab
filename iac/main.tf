@@ -5,6 +5,15 @@ locals {
   }
 }
 
+data "aws_ami" "opensuse_leap" {
+  most_recent = true
+
+  filter {
+    name   = "image-id"
+    values = ["ami-5e654f5f6ea403716"] // Ubuntu Noble LTS 24.04
+  }
+}
+
 resource "aws_key_pair" "pub_key" {
   key_name   = "pub-key"
   public_key = file(pathexpand(var.pub_key_path))
@@ -13,7 +22,7 @@ resource "aws_key_pair" "pub_key" {
 resource "aws_instance" "k8s_master" {
   count = var.master_count
 
-  ami           = "ami-000001"
+  ami           = data.aws_ami.opensuse_leap.id
   instance_type = var.master_instance
   key_name      = aws_key_pair.pub_key.key_name
 
