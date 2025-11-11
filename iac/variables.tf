@@ -9,6 +9,17 @@ variable "cluster_name" {
   type        = string
 }
 
+variable "cluster_token" {
+  description = "Pre-shared token for RKE2 cluster nodes"
+  type        = string
+  sensitive   = true
+
+  validation {
+    condition     = length(var.cluster_token) >= 16
+    error_message = "Cluster token must be at least 16 characters long."
+  }
+}
+
 variable "master_count" {
   description = "Number of EC2 instances (master node) to provision (1 to 5)."
   type        = number
@@ -29,7 +40,7 @@ variable "master_instance" {
 variable "root_volume_size" {
   description = "Root volume size in GB"
   type        = number
-  default     = 20
+  default     = 40
 }
 
 variable "pub_key_path" {
