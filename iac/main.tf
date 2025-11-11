@@ -42,6 +42,7 @@ resource "aws_instance" "k8s_master" {
   vpc_security_group_ids = [aws_security_group.k8s_master.id]
 
   user_data = templatefile("${path.module}/templates/userdata.yaml.tftpl", {
+    rke2_version = var.rke2_version
     rke2_common = local.rke2_common
 
     rke2_node = templatefile("${path.module}/templates/rke2-master.yaml.tftpl", {

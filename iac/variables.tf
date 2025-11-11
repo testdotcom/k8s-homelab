@@ -48,3 +48,9 @@ variable "pub_key_path" {
   type        = string
   default     = "~/.ssh/id_ed25519.pub"
 }
+
+variable "rke2_version" {
+  description = "Install the specified RKE2 version."
+  type = string
+  default = "v1.34.1+rke2r1"
+}
