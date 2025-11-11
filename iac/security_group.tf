@@ -40,24 +40,11 @@ resource "aws_vpc_security_group_ingress_rule" "k8s_api" {
   }
 }
 
-resource "aws_vpc_security_group_ingress_rule" "rke2_supervisor" {
+resource "aws_vpc_security_group_ingress_rule" "etcd" {
   security_group_id = aws_security_group.k8s_master.id
-  description       = "RKE2 supervisor API for node registration"
-  from_port         = 9345
-  to_port           = 9345
-  ip_protocol       = "tcp"
-  cidr_ipv4         = "0.0.0.0/0"
-
-  tags = {
-    Name = "rke2-supervisor"
-  }
-}
-
-resource "aws_vpc_security_group_ingress_rule" "etcd_client" {
-  security_group_id = aws_security_group.k8s_master.id
-  description       = "etcd client port"
+  description       = "etcd client, peer, and metrics"
   from_port         = 2379
-  to_port           = 2379
+  to_port           = 2381
   ip_protocol       = "tcp"
   cidr_ipv4         = "0.0.0.0/0"
 
@@ -66,35 +53,9 @@ resource "aws_vpc_security_group_ingress_rule" "etcd_client" {
   }
 }
 
-resource "aws_vpc_security_group_ingress_rule" "etcd_peer" {
-  security_group_id = aws_security_group.k8s_master.id
-  description       = "etcd peer port"
-  from_port         = 2380
-  to_port           = 2380
-  ip_protocol       = "tcp"
-  cidr_ipv4         = "0.0.0.0/0"
-
-  tags = {
-    Name = "etcd-peer"
-  }
-}
-
-resource "aws_vpc_security_group_ingress_rule" "etcd_metrics" {
-  security_group_id = aws_security_group.k8s_master.id
-  description       = "etcd metrics port"
-  from_port         = 2381
-  to_port           = 2381
-  ip_protocol       = "tcp"
-  cidr_ipv4         = "0.0.0.0/0"
-
-  tags = {
-    Name = "etcd-metrics"
-  }
-}
-
 resource "aws_vpc_security_group_ingress_rule" "kubelet" {
   security_group_id = aws_security_group.k8s_master.id
-  description       = "Kubelet API"
+  description       = "kubelet metrics"
   from_port         = 10250
   to_port           = 10250
   ip_protocol       = "tcp"
@@ -104,58 +65,6 @@ resource "aws_vpc_security_group_ingress_rule" "kubelet" {
     Name = "kubelet-api"
   }
 }
-
-resource "aws_vpc_security_group_ingress_rule" "kube_controller_manager" {
-  security_group_id = aws_security_group.k8s_master.id
-  description       = "kube-controller-manager"
-  from_port         = 10257
-  to_port           = 10257
-  ip_protocol       = "tcp"
-  cidr_ipv4         = "0.0.0.0/0"
-
-  tags = {
-    Name = "kube-controller-manager"
-  }
-}
-
-resource "aws_vpc_security_group_ingress_rule" "kube_scheduler" {
-  security_group_id = aws_security_group.k8s_master.id
-  description       = "kube-scheduler"
-  from_port         = 10259
-  to_port           = 10259
-  ip_protocol       = "tcp"
-  cidr_ipv4         = "0.0.0.0/0"
-
-  tags = {
-    Name = "kube-scheduler"
-  }
-}
-
-/*resource "aws_vpc_security_group_ingress_rule" "flannel_vxlan" {
-  security_group_id = aws_security_group.k8s_master.id
-  description       = "Flannel VXLAN (default CNI)"
-  from_port         = 8472
-  to_port           = 8472
-  ip_protocol       = "udp"
-  cidr_ipv4         = "0.0.0.0/0"
-
-  tags = {
-    Name = "flannel-vxlan"
-  }
-}
-
-resource "aws_vpc_security_group_ingress_rule" "canal_health" {
-  security_group_id = aws_security_group.k8s_master.id
-  description       = "Canal CNI health checks"
-  from_port         = 9099
-  to_port           = 9099
-  ip_protocol       = "tcp"
-  cidr_ipv4         = "0.0.0.0/0"
-
-  tags = {
-    Name = "canal-health"
-  }
-}*/
 
 resource "aws_vpc_security_group_ingress_rule" "nodeport_tcp" {
   security_group_id = aws_security_group.k8s_master.id
@@ -180,5 +89,44 @@ resource "aws_vpc_security_group_ingress_rule" "nodeport_udp" {
 
   tags = {
     Name = "nodeport-udp"
+  }
+}
+
+resource "aws_vpc_security_group_ingress_rule" "rke2_supervisor" {
+  security_group_id = aws_security_group.k8s_master.id
+  description       = "RKE2 supervisor API"
+  from_port         = 9345
+  to_port           = 9345
+  ip_protocol       = "tcp"
+  cidr_ipv4         = "0.0.0.0/0"
+
+  tags = {
+    Name = "rke2-supervisor"
+  }
+}
+
+resource "aws_vpc_security_group_ingress_rule" "cilium_health_checks" {
+  security_group_id = aws_security_group.k8s_master.id
+  description       = "cilium health checks"
+  from_port         = 4240
+  to_port           = 4240
+  ip_protocol       = "tcp"
+  cidr_ipv4         = "0.0.0.0/0"
+
+  tags = {
+    Name = "kube-scheduler"
+  }
+}
+
+resource "aws_vpc_security_group_ingress_rule" "flannel_vxlan" {
+  security_group_id = aws_security_group.k8s_master.id
+  description       = "Flannel VXLAN"
+  from_port         = 8472
+  to_port           = 8472
+  ip_protocol       = "udp"
+  cidr_ipv4         = "0.0.0.0/0"
+
+  tags = {
+    Name = "flannel-vxlan"
   }
 }
