@@ -1,14 +1,12 @@
 locals {
+  rke2_common = templatefile("${path.module}/templates/rke2-common.yaml.tftpl", {
+    token = var.cluster_token
+  })
+
   tags = {
     Role    = "master"
     Cluster = "${var.cluster_name}"
   }
-}
-
-locals {
-  rke2_common = templatefile("${path.module}/templates/rke2-common.yaml.tftpl", {
-    token = var.cluster_token
-  })
 }
 
 data "aws_ami" "ubuntu_noble" {
