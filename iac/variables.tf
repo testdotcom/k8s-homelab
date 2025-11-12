@@ -43,6 +43,18 @@ variable "root_volume_size" {
   default     = 40
 }
 
+variable "worker_count" {
+  description = "Number of EC2 instances (worker node) to provision."
+  type        = number
+  default     = 1
+}
+
+variable "worker_instance" {
+  description = "EC2 instance type for worker node."
+  type        = string
+  default     = "t3.small"
+}
+
 variable "pub_key_path" {
   description = "Path to SSH public key."
   type        = string
@@ -51,6 +63,6 @@ variable "pub_key_path" {
 
 variable "rke2_version" {
   description = "Install the specified RKE2 version."
-  type = string
-  default = "v1.34.1+rke2r1"
+  type        = string
+  default     = "v1.34.1+rke2r1"
 }

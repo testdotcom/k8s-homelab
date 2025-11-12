@@ -1,0 +1,28 @@
+#cloud-config
+write_files:
+  - path: /etc/rancher/rke2/config.yaml.d/common.yaml
+    content: |
+      ${indent(6, "${rke2_common}")}
+  - path: /etc/rancher/rke2/config.yaml.d/master.yaml
+    content: |
+      ${indent(6, "${rke2_master}")}
+  - path: /var/lib/rancher/rke2/server/manifests/rke2-cilium-config.yaml
+    content: |
+      ${indent(6, file("${path_module}/manifests/rke2-cilium-config.yaml"))}
+
+locale: en_US.UTF-8
+
+runcmd:
+  - apt-get update && apt-get upgrade --yes
+  - apt-get install --yes apparmor-utils
+  
+  - systemctl disable --now ufw
+
+  - curl -fsSL -o rke2-install.sh https://get.rke2.io
+  - chmod +x rke2-install.sh
+  - INSTALL_RKE2_VERSION=${rke2_version} ./rke2-install.sh
+  - systemctl enable --now rke2-server.service
+
+  - curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+  - chmod +x get_helm.sh
+  - ./get_helm.sh
