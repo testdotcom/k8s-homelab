@@ -1,5 +1,10 @@
-variable "tf_passphrase" {
-  description = "Terraform state encryption key."
+variable "cluster_name" {
+  description = "Name of the Kubernetes cluster."
+  type        = string
+}
+
+variable "cluster_token" {
+  description = "Pre-shared token for RKE2 cluster nodes"
   type        = string
   sensitive   = true
 }
@@ -7,52 +12,39 @@ variable "tf_passphrase" {
 variable "master_count" {
   description = "Number of EC2 instances (master node) to provision (1 to 5)."
   type        = number
-  default     = 1
-
-  validation {
-    condition     = var.master_count >= 1 && var.master_count <= 5
-    error_message = "You must specify between 1 and 5 instances."
-  }
 }
 
 variable "master_instance" {
   description = "EC2 instance type for master node."
   type        = string
-  default     = "t3.medium"
 }
 
 variable "master_root_size" {
   description = "Root volume size in GB"
   type        = number
-  default     = 40
 }
 
 variable "worker_count" {
   description = "Number of EC2 instances (worker node) to provision."
   type        = number
-  default     = 1
 }
 
 variable "worker_instance" {
   description = "EC2 instance type for worker node."
   type        = string
-  default     = "t3.small"
 }
 
 variable "worker_root_size" {
   description = "Root volume size in GB"
   type        = number
-  default     = 40
 }
 
 variable "pub_key_path" {
   description = "Path to SSH public key."
   type        = string
-  default     = "~/.ssh/id_ed25519.pub"
 }
 
 variable "rke2_version" {
   description = "Install the specified RKE2 version."
   type        = string
-  default     = "v1.34.1+rke2r1"
 }

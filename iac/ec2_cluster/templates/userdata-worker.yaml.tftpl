@@ -1,14 +1,14 @@
 #cloud-config
 write_files:
+  - path: /etc/sysctl.d/90-kubelet.conf
+    content: |
+      ${indent(6, file("${path_module}/conf/90-kubelet.conf"))}
   - path: /etc/rancher/rke2/config.yaml.d/common.yaml
     content: |
       ${indent(6, "${rke2_common}")}
-  - path: /etc/rancher/rke2/config.yaml.d/master.yaml
+  - path: /etc/rancher/rke2/config.yaml.d/worker.yaml
     content: |
-      ${indent(6, "${rke2_master}")}
-  - path: /var/lib/rancher/rke2/server/manifests/rke2-cilium-config.yaml
-    content: |
-      ${indent(6, file("${path_module}/manifests/rke2-cilium-config.yaml"))}
+      ${indent(6, "${rke2_worker}")}
 
 locale: en_US.UTF-8
 
@@ -20,10 +20,10 @@ runcmd:
 
   - curl -fsSL -o rke2-install.sh https://get.rke2.io
   - chmod +x rke2-install.sh
-  - INSTALL_RKE2_VERSION=${rke2_version} ./rke2-install.sh
-  - systemctl enable --now rke2-server.service
+  - INSTALL_RKE2_VERSION=${rke2_version} INSTALL_RKE2_TYPE=agent ./rke2-install.sh
+  - systemctl enable --now rke2-agent.service
 
-  - printf '\nexport PATH="${PATH}:/var/lib/rancher/rke2/bin"' >> $HOME/.bashrc
+  - printf '\nexport PATH="$PATH:/var/lib/rancher/rke2/bin"' >> $HOME/.bashrc
   - printf '\nexport KUBECONFIG="/etc/rancher/rke2/rke2.yaml"' >> $HOME/.bashrc
   - printf '\nalias k="/var/lib/rancher/rke2/bin/kubectl"' >> $HOME/.bashrc
   - source $HOME/.bashrc
