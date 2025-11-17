@@ -1,3 +1,7 @@
 node-name: master-${index}
 cni: cilium
+cilium:
+  enable-gateway-api: "true"
 disable-kube-proxy: true
+disable:
+  - rke2-ingress-nginx
