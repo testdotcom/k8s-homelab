@@ -71,3 +71,15 @@ tflocal destroy -auto-approve
 
 localstack stop
 ```
+
+## Enable Kubernetes Gateway APIs
+
+On November 2025, the Ingress NGINX has been [officially retired](https://www.kubernetes.dev/blog/2025/11/12/ingress-nginx-retirement), and the RKE2 addon is disabled on this project. The recommended way is to enable the Gateway API; Cilium stable release `1.8` supports up to [Gateway Profile 1.3](https://gateway-api.sigs.k8s.io/implementations/v1.3):
+
+```sh
+kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.3.0/standard-install.yaml
+
+# Uncomment cilium.enable-gateway-api from /etc/rancher/rke2/config.yaml.d/master.yaml
+
+systemctl restart rke2-server.service
+```
