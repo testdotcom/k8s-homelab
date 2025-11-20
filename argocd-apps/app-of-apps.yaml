@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: app-of-apps
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io  # Avoid orphaned childs
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/testdotcom/k8s-homelab.git
+    targetRevision: HEAD
+    path: apps
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:  # Enable Continuos Deployment (instead of Continuos Delivery)
+      prune: true # Delete corresponding K8s resources if removed from Git
+      selfHeal: true  # Rollback manual changes (avoid config drift)
+    retry:  # Handle transient failures
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m

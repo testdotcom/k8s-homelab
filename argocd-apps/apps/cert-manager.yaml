@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cert-manager
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io  # Avoid orphaned childs
+  annotations:
+    argocd.argoproj.io/sync-wave: "1" # For dependencies ordering
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/testdotcom/k8s-homelab.git
+    targetRevision: HEAD
+    path: charts/cert-manager
+    helm:
+      parameters:
+        - name: installCRDs
+          value: "true"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cert-manager
+  syncPolicy:
+    automated:  # Enable Continuos Deployment (instead of Continuos Delivery)
+      prune: true # Delete corresponding K8s resources if removed from Git
+      selfHeal: true  # Rollback manual changes (avoid config drift)
+    retry:  # Handle transient failures
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+    syncOptions:
+      - CreateNamespace=true
