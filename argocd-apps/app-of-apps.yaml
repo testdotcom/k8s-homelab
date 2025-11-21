@@ -4,7 +4,7 @@ metadata:
   name: app-of-apps
   namespace: argocd
   finalizers:
-    - resources-finalizer.argocd.argoproj.io  # Avoid orphaned childs
+    - resources-finalizer.argocd.argoproj.io/background  # Avoid orphaned childs
 spec:
   project: default
   source:
