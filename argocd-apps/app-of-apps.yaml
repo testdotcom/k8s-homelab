@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/testdotcom/k8s-homelab.git
     targetRevision: HEAD
-    path: apps
+    path: argocd-apps/apps
     directory:
       recurse: true
   destination:
