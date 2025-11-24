@@ -7,6 +7,9 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            webserver
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
@@ -19,6 +22,9 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            webserver
       - name: Login to registry
         uses: docker/login-action@v3
         with:
