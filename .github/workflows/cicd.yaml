@@ -15,12 +15,14 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
-          go-version-file: 'go.mod'
+          go-version-file: 'webserver/go.mod'
+          cache-dependency-path: 'webserver/go.sum'
           cache: true
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v9
         with:
           version: v2.6
+          working-directory: webserver
   test:
     runs-on: ubuntu-latest
     permissions:
@@ -34,9 +36,11 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
-          go-version-file: 'go.mod'
+          go-version-file: 'webserver/go.mod'
+          cache-dependency-path: 'webserver/go.sum'
           cache: true
       - name: Run Go test coverage
+        working-directory: webserver
         run: go test -cover ./...
   build-image:
     needs: test
