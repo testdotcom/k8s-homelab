@@ -16,7 +16,7 @@ import (
 )
 
 type Options struct {
-	Port int `help:"Exposed server port" short:"p" default:"8888"`
+	Port     int    `help:"Exposed server port" short:"p" default:"8888"`
 	Hostname string `help:"Domain name only" default:"localhost"`
 	LogLevel string `help:"Logging level" default:"" enum:"debug,info,warn,error"`
 }
