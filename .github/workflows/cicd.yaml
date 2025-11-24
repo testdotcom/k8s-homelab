@@ -79,6 +79,6 @@ jobs:
           workdir: webserver
           source: "{{defaultContext}}"
           files: |
-            ./docker-bake.hcl
-            cwd://${{ steps.meta.outputs.bake-file-tags }}
+            webserver/docker-bake.hcl
+            ${{ steps.meta.outputs.bake-file-tags }}
           targets: build
