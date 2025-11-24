@@ -2,6 +2,25 @@ name: CICD pipeline
 on: workflow_dispatch
 
 jobs:
+  lint-and-format:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            webserver
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: 'go.mod'
+          cache: true
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.6
   test:
     runs-on: ubuntu-latest
     permissions:
