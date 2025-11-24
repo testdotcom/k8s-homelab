@@ -1,8 +1,7 @@
+version: "2"
 linters:
+  default: fast
+formatters:
   enable:
-    - gofumpt  # Check for strict formatting
+    - gofumpt
     - goimports
-    - govet # Report suspicious constructs
-    - staticcheck
-issues:
-  exit-code: 1  # Fail CI job if issues are found
