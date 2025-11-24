@@ -43,7 +43,7 @@ jobs:
         working-directory: webserver
         run: go test -cover ./...
   build-image:
-    needs: test
+    needs: [lint-and-format, test]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -76,6 +76,7 @@ jobs:
         uses: docker/bake-action@v6
         with:
           push: true
+          workdir: webserver
           source: "{{defaultContext}}"
           files: |
             ./docker-bake.hcl
