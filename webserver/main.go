@@ -46,6 +46,7 @@ func main() {
 		router.Use(middleware.Timeout(REQ_TIMEOUT))
 
 		port := strconv.Itoa(options.Port)
+
 		router.Route("/api/v1", func(r chi.Router) {
 			config := huma.DefaultConfig("Demo webserver", "develop")
 			config.Servers = []*huma.Server{
