@@ -14,7 +14,7 @@ curl -OL "https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.33
 tar -xvzf kubeseal-0.33.1-linux-amd64.tar.gz kubeseal
 sudo install -m 755 kubeseal /usr/local/bin/kubeseal
 ```
-3. (OPTIONAL) Generate the Secret manifest and the relative SealedSecret:
+3. (**OPTIONAL**) Generate the Secret manifest and the relative SealedSecret:
 ```sh
 kubectl create namespace argocd
 
