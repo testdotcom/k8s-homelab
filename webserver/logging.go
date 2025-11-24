@@ -25,6 +25,7 @@ func formatStackTrace(stackTrace errors.StackTrace) []string {
 
 		if fn == nil {
 			frames = append(frames, "unknown")
+
 			continue
 		}
 
@@ -56,6 +57,7 @@ func replaceAttr(groups []string, a slog.Attr) slog.Attr {
 
 func InitLogger(level string) {
 	slogLevel := slog.LevelInfo
+
 	switch level {
 	case "debug":
 		slogLevel = slog.LevelDebug
