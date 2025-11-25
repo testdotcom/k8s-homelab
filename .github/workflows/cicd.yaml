@@ -46,7 +46,7 @@ jobs:
   scan-repo:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       security-events: write
     steps:
       - name: Check out repository
