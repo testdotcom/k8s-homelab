@@ -112,7 +112,7 @@ jobs:
       - name: Scan container image for vulnerabilities
         uses: aquasecurity/trivy-action@0.28.0
         with:
-          image-ref: 'testdotcom/webserver:latest'
+          image-ref: 'ghcr.io/testdotcom/webserver:latest'
           trivy-config: trivy.yaml
           scan-type: 'image'
           format: 'github'
