@@ -42,12 +42,35 @@ jobs:
       - name: Run Go test coverage
         working-directory: webserver
         run: go test -cover ./...
-  build-image:
-    needs: [lint-and-format, test]
+
+  scan-repo:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            webserver
+      - name: Scan repository for vulnerabilities (generate SBOM)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: 'fs'
+          scan-ref: 'webserver'
+          trivy-config: trivy.yaml
+          output: 'dependency-results.sbom.json'
+          format: 'github'
+          github-pat: ${{ secrets.k8s-homelab-trivy }}
+
+  build-scan-push-image:
+    needs: [lint-and-format, test, scan-repo]
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
+      #security-events: write
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
@@ -72,7 +95,29 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=sha
-      - name: Build and push
+      - name: Build container image
+        uses: docker/bake-action@v6
+        id: build
+        with:
+          push: false
+          load: true
+          workdir: webserver
+          source: "{{defaultContext}}:webserver"
+          files: |
+            ./docker-bake.hcl
+            cwd://${{ steps.meta.outputs.bake-file-tags }}
+          targets: build
+          set: |
+            *.output=type=docker
+      - name: Scan container image for vulnerabilities
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ${{ steps.build.outputs.imageid }}
+          trivy-config: trivy.yaml
+          scan-type: 'image'
+          format: 'github'
+      - name: Push container image
+        if: success()
         uses: docker/bake-action@v6
         with:
           push: true
