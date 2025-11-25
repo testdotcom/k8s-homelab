@@ -62,7 +62,7 @@ jobs:
           trivy-config: trivy.yaml
           output: 'dependency-results.sbom.json'
           format: 'github'
-          github-pat: ${{ secrets.k8s-homelab-trivy }}
+          github-pat: ${{ secrets.GITHUB_TOKEN }}
 
   build-scan-push-image:
     needs: [lint-and-format, test, scan-repo]
@@ -70,7 +70,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-      #security-events: write
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
@@ -116,6 +115,7 @@ jobs:
           trivy-config: trivy.yaml
           scan-type: 'image'
           format: 'github'
+          github-pat: ${{ secrets.GITHUB_TOKEN }}
       - name: Push container image
         if: success()
         uses: docker/bake-action@v6
