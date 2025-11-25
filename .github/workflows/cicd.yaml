@@ -60,7 +60,7 @@ jobs:
           scan-type: 'fs'
           scan-ref: 'webserver'
           trivy-config: trivy.yaml
-          output: 'dependency-results.sbom.json'
+          output: '${{ github.workspace }}/dependency-results.sbom.json'
           format: 'github'
           github-pat: ${{ secrets.GITHUB_TOKEN }}
 
