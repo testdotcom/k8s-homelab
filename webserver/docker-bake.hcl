@@ -5,4 +5,6 @@ target "build" {
   context = "./"
   dockerfile = "Dockerfile"
   platforms = ["linux/amd64"]
+  tags = ["testdotcom/webserver:latest"]
+  output = ["type=docker"]
 }
