@@ -1,5 +1,7 @@
 # Kubernetes Homelab Setup
 
+[![CICD pipeline](https://github.com/testdotcom/k8s-homelab/actions/workflows/cicd.yaml/badge.svg)](https://github.com/testdotcom/k8s-homelab/actions/workflows/cicd.yaml)
+
 The following project is a blueprint for provisioning a self-hosted Kubernetes cluster. Please refer to each subfolder README:
 
 - **argocd-apps**: Implement GitOps by following the *app-of-apps* pattern
