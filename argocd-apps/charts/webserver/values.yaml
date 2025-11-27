@@ -1,0 +1,58 @@
+replicaCount: 1
+nodeSelector: {}
+
+imagePullSecrets: []
+image:
+  repository: ghcr.io/testdotcom/webserver
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+serviceAccount:
+  create: true
+  name: ""
+  # Disable API credentials auto-mount
+  automount: false
+
+podSecurityContext:
+  runAsUser: 10001
+  runAsGroup: 10001
+  fsGroup: 10001
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  runAsNonRoot: true
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+    - ALL
+
+service:
+  type: ClusterIP
+  port: 8888
+  targetPort: 8888
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 2
+  periodSeconds: 5
+#readinessProbe:
+#  httpGet:
+#    path: /ready
+#    port: http
+#  initialDelaySeconds: 5
+#  periodSeconds: 10
+
+nameOverride: ""
+fullnameOverride: ""

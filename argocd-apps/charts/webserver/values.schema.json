@@ -1,0 +1,143 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Demo Webserver Values",
+  "description": "Schema for the demo webserver Helm chart.",
+  "type": "object",
+  "required": [
+    "replicaCount",
+    "image",
+    "service",
+    "serviceAccount",
+    "podSecurityContext",
+    "securityContext"
+  ],
+  "properties": {
+    "replicaCount": {
+      "description": "Number of desired pods.",
+      "type": "integer",
+      "minimum": 0
+    },
+    "image": {
+      "description": "Configuration for container image.",
+      "type": "object",
+      "required": ["repository", "pullPolicy", "tag"],
+      "properties": {
+        "repository": {
+          "description": "Container image repository.",
+          "type": "string",
+          "pattern": "^[^\\s]+$"
+        },
+        "pullPolicy": {
+          "description": "Container image pull policy.",
+          "type": "string",
+          "enum": ["Always", "IfNotPresent", "Never"]
+        },
+        "tag": {
+          "description": "Container image tag or digest.",
+          "type": "string"
+        }
+      }
+    },
+    "imagePullSecrets": {
+      "description": "Secrets for pulling private container images.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" }
+        }
+      }
+    },
+    "nameOverride": {
+      "description": "Override the chart name.",
+      "type": "string"
+    },
+    "fullnameOverride": {
+      "description": "Override the fully-qualified app name.",
+      "type": "string"
+    },
+    "serviceAccount": {
+      "description": "Configuration for Service Account.",
+      "type": "object",
+      "properties": {
+        "create": { "type": "boolean" },
+        "name": { "type": "string" },
+        "annotations": { "type": "object" },
+        "automount": {
+          "description": "Whether to auto-mount API credentials. Enable only if API access is required.",
+          "type": "boolean"
+        }
+      }
+    },
+    "podSecurityContext": {
+      "description": "Configuration for pod security.",
+      "type": "object",
+      "properties": {
+        "runAsUser": { "type": "integer" },
+        "runAsGroup": { "type": "integer" },
+        "fsGroup": { "type": "integer" },
+        "seccompProfile": {
+          "type": "object",
+          "properties": {
+            "type": { "type": "string" }
+          }
+        }
+      }
+    },
+    "securityContext": {
+      "description": "Configuration for container security.",
+      "type": "object",
+      "properties": {
+        "allowPrivilegeEscalation": { "type": "boolean" },
+        "runAsNonRoot": { "type": "boolean" },
+        "readOnlyRootFilesystem": { "type": "boolean" },
+        "capabilities": {
+          "type": "object",
+          "properties": {
+            "drop": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "add": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "service": {
+      "description": "Service configuration.",
+      "type": "object",
+      "required": ["type", "port", "targetPort"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["ClusterIP", "NodePort", "LoadBalancer", "ExternalName"]
+        },
+        "port": { "type": "integer", "minimum": 1 },
+        "targetPort": {
+          "description": "Container port receiving network traffic.",
+          "type": ["integer", "string"]
+        }
+      }
+    },
+    "resources": {
+      "description": "Resource requests and limits.",
+      "type": "object",
+      "properties": {
+        "limits": { "type": "object" },
+        "requests": { "type": "object" }
+      }
+    },
+    "livenessProbe": {
+      "description": "Configuration for the Liveness Probe.",
+      "type": "object"
+    },
+    "nodeSelector": {
+      "description": "Configuration for pod assignment.",
+      "type": "object"
+    }
+  }
+}
