@@ -55,7 +55,7 @@ func main() {
 		huma.Get(api, "/health", healthCheckHandler)
 
 		router.Route("/api/v1", func(r chi.Router) {
-			// TODO
+			// YOUR ENDPOINTS HERE
 		})
 
 		hooks.OnStart(func() {
