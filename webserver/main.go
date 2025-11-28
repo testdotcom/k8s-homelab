@@ -47,14 +47,15 @@ func main() {
 
 		port := strconv.Itoa(options.Port)
 
-		router.Route("/api/v1", func(r chi.Router) {
-			config := huma.DefaultConfig("Demo webserver", "develop")
-			config.Servers = []*huma.Server{
-				{URL: net.JoinHostPort(options.Hostname, port)},
-			}
-			api := humachi.New(r, config)
+		config := huma.DefaultConfig("Demo webserver", "develop")
+		config.Servers = []*huma.Server{
+			{URL: net.JoinHostPort(options.Hostname, port)},
+		}
+		api := humachi.New(router, config)
+		huma.Get(api, "/health", healthCheckHandler)
 
-			huma.Get(api, "/health", healthCheckHandler)
+		router.Route("/api/v1", func(r chi.Router) {
+			// TODO
 		})
 
 		hooks.OnStart(func() {

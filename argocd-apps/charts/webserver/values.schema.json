@@ -131,6 +131,21 @@
         "requests": { "type": "object" }
       }
     },
+    "startupProbe": {
+      "description": "Configuration for the Startup Probe.",
+      "type": "object",
+      "properties": {
+        "failureThreshold": { "type": "integer" },
+        "periodSeconds": { "type": "integer" },
+        "httpGet": {
+             "type": "object",
+             "properties": {
+                 "path": { "type": "string" },
+                 "port": { "type": ["string", "integer"] }
+             }
+        }
+      }
+    },
     "livenessProbe": {
       "description": "Configuration for the Liveness Probe.",
       "type": "object"

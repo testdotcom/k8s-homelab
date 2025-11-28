@@ -41,18 +41,25 @@ resources:
     cpu: 100m
     memory: 128Mi
 
+startupProbe:
+  httpGet:
+    path: /health
+    port: 8888
+  # Allow up to 30s * 4s = 2m for startup (covers high CPU init period)
+  failureThreshold: 30
+  periodSeconds: 4
 livenessProbe:
   httpGet:
     path: /health
-    port: http
-  initialDelaySeconds: 2
+    port: 8888
+  initialDelaySeconds: 0  # Handled by startupProbe
   periodSeconds: 5
 #readinessProbe:
 #  httpGet:
 #    path: /ready
-#    port: http
-#  initialDelaySeconds: 5
-#  periodSeconds: 10
+#    port: 8888
+#  initialDelaySeconds: 0 # Handled by startupProbe
+#  periodSeconds: 5
 
 nameOverride: ""
 fullnameOverride: ""
