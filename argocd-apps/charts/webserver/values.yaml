@@ -4,7 +4,7 @@ nodeSelector: {}
 imagePullSecrets: []
 image:
   repository: ghcr.io/testdotcom/webserver
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   tag: "latest"
 
 serviceAccount:
@@ -60,6 +60,13 @@ livenessProbe:
 #    port: 8888
 #  initialDelaySeconds: 0 # Handled by startupProbe
 #  periodSeconds: 5
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
 
 nameOverride: ""
 fullnameOverride: ""
