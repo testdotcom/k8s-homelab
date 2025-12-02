@@ -10,7 +10,8 @@
     "serviceAccount",
     "podSecurityContext",
     "securityContext",
-    "autoscaling"
+    "autoscaling",
+    "gateway"
   ],
   "properties": {
     "replicaCount": {
@@ -134,6 +135,19 @@
           "description": "Container port receiving network traffic.",
           "type": ["integer", "string"]
         }
+      }
+    },
+    "gateway": {
+      "description": "Configuration for the Gateway API.",
+      "type": "object",
+      "required": ["enabled", "createGateway", "name", "gatewayClassName", "hostname"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "createGateway": { "type": "boolean" },
+        "name": { "type": "string" },
+        "gatewayClassName": { "type": "string" },
+        "hostname": { "type": "string" },
+        "port": { "type": "integer" }
       }
     },
     "resources": {

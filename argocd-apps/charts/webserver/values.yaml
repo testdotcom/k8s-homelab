@@ -33,6 +33,14 @@ service:
   port: 8888
   targetPort: 8888
 
+gateway:
+  enabled: true
+  createGateway: true
+  name: "webserver-gateway"
+  gatewayClassName: "eg" 
+  hostname: "webserver.local"
+  port: 8888
+
 resources:
   limits:
     cpu: 500m
