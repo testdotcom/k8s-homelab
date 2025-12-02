@@ -111,7 +111,7 @@ jobs:
           set: |
             *.output=type=docker
       - name: Scan container image for vulnerabilities
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@0.33.1
         with:
           image-ref: 'ghcr.io/testdotcom/webserver:latest'
           trivy-config: trivy.yaml
