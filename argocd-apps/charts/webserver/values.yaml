@@ -41,6 +41,12 @@ gateway:
   hostname: "webserver.local"
   port: 8888
 
+  tls:
+    enabled: true
+    port: 8443
+    secretName: webserver-tls
+    issuer: selfsigned
+
 resources:
   limits:
     cpu: 500m

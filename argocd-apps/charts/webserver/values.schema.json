@@ -147,7 +147,40 @@
         "name": { "type": "string" },
         "gatewayClassName": { "type": "string" },
         "hostname": { "type": "string" },
-        "port": { "type": "integer" }
+        "port": { "type": "integer" },
+        "tls": {
+          "type": "object",
+          "title": "TLS Configuration",
+          "description": "Configuration for HTTPS/TLS termination.",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "title": "Enable TLS",
+              "description": "Enable the HTTPS listener.",
+              "default": true
+            },
+            "port": {
+              "type": "integer",
+              "title": "HTTPS Port",
+              "description": "The HTTPS listener port.",
+              "default": 8443,
+              "minimum": 1,
+              "maximum": 65535
+            },
+            "secretName": {
+              "type": "string",
+              "title": "Secret Name",
+              "description": "The Secret that stores the TLS certificate.",
+              "minLength": 1
+            },
+            "issuer": {
+              "type": "string",
+              "title": "Cert-Manager Issuer",
+              "description": "The Cert-Manager ClusterIssuer or Issuer.",
+              "default": "selfsigned"
+            }
+          }
+        }
       }
     },
     "resources": {
