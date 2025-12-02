@@ -3,6 +3,10 @@ kind: Application
 metadata:
   name: envoy-gateway
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io/background  # Avoid orphaned childs
+  annotations:
+    argocd.argoproj.io/sync-wave: "1" # For dependencies ordering
 spec:
   project: default
   source:
@@ -10,8 +14,8 @@ spec:
     repoURL: docker.io/envoyproxy
     targetRevision: v1.6.0
   destination:
-    namespace: envoy-gateway-system
     server: https://kubernetes.default.svc
+    namespace: envoy-gateway-system
   syncPolicy:
     automated:  # Enable Continuos Deployment (instead of Continuos Delivery)
       prune: true # Delete corresponding K8s resources if removed from Git
