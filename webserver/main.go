@@ -17,9 +17,10 @@ import (
 )
 
 type Options struct {
-	Port     int    `help:"Exposed server port" short:"p" default:"8888"`
-	Hostname string `help:"Domain name only" default:"localhost"`
-	LogLevel string `help:"Logging level" default:"info" enum:"debug,info,warn,error"`
+	Port       int    `help:"Exposed server port" short:"p" default:"8888"`
+	Hostname   string `help:"Domain name only" default:"localhost"`
+	LogLevel   string `help:"Logging level" default:"info" enum:"debug,info,warn,error"`
+	ReqTimeout int64  `help:"Request timeout (in minutes)" default:"10"`
 }
 
 type HealthCheckResponse struct {
@@ -27,8 +28,6 @@ type HealthCheckResponse struct {
 		Status string `json:"status"`
 	}
 }
-
-var REQ_TIMEOUT = 10 * time.Minute
 
 func healthCheckHandler(_ context.Context, _ *struct{}) (*HealthCheckResponse, error) {
 	resp := &HealthCheckResponse{}
@@ -43,7 +42,9 @@ func main() {
 
 		router := chi.NewMux()
 		router.Use(middleware.Logger)
-		router.Use(middleware.Timeout(REQ_TIMEOUT))
+
+		timeout := time.Duration(options.ReqTimeout) * time.Minute
+		router.Use(middleware.Timeout(timeout))
 
 		port := strconv.Itoa(options.Port)
 
