@@ -52,6 +52,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
+        env:
+          TRIVY_DEBUG: true
         with:
           sparse-checkout: |
             webserver
@@ -61,7 +63,7 @@ jobs:
         with:
           scan-type: 'fs'
           scan-ref: 'webserver'
-          trivy-config: trivy.yaml
+          trivy-config: '${{ github.workspace }}/trivy.yaml'
           format: 'github'
           output: '${{ github.workspace }}/dependency-results.sbom.json'
           github-pat: ${{ secrets.GITHUB_TOKEN }}
@@ -74,6 +76,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
+        env:
+          TRIVY_DEBUG: true
         with:
           sparse-checkout: |
             iac
@@ -84,7 +88,7 @@ jobs:
         with:
           scan-type: 'fs'
           scan-ref: '.'
-          trivy-config: trivy.yaml
+          trivy-config: '${{ github.workspace }}/trivy.yaml'
           scanners: 'vuln,misconfig,secret'
           format: 'sarif'
           output: '${{ github.workspace }}/trivy-iac-results.sarif'
@@ -142,10 +146,12 @@ jobs:
             *.output=type=docker
       - name: Scan container image for vulnerabilities
         uses: aquasecurity/trivy-action@0.33.1
+        env:
+          TRIVY_DEBUG: true
         with:
           image-ref: 'ghcr.io/testdotcom/webserver:latest'
           scan-type: 'image'
-          trivy-config: trivy.yaml
+          trivy-config: '${{ github.workspace }}/trivy.yaml'
           format: 'sarif'
           output: '${{ github.workspace }}/trivy-img-results.sarif'
       - name: Upload SARIF scan results to GitHub Security
