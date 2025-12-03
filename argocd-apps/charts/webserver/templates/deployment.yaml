@@ -34,6 +34,9 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.config.name }}
           ports:
             - name: http
               containerPort: {{ .Values.service.targetPort }}
@@ -44,7 +47,6 @@ spec:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          # readOnlyRootFilesystem: true
           # Provide a writable tmp volume
           volumeMounts:
             - name: tmp-data

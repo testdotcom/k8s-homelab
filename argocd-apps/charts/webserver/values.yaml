@@ -1,6 +1,13 @@
 replicaCount: 1
 nodeSelector: {}
 
+config:
+  name: webserver-cm
+  port: "8888"
+  hostname: localhost
+  logLevel: info
+  reqTimeout: "10"
+
 imagePullSecrets: []
 image:
   repository: ghcr.io/testdotcom/webserver
