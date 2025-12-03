@@ -65,8 +65,37 @@ jobs:
           format: 'github'
           github-pat: ${{ secrets.GITHUB_TOKEN }}
 
+  scan-infra:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            iac
+            argocd-apps
+      - name: Scan IaC for vulnerabilities
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          scanners: 'vuln,misconfig,secret'
+          format: 'sarif'
+          output: '${{ github.workspace }}/trivy-iac-results.sarif'
+          ignore-unfixed: true
+          severity: 'CRITICAL'
+          exit-code: '1'
+      - name: Upload SARIF scan results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v4
+        if: always()
+        with:
+          sarif_file: '${{ github.workspace }}/trivy-iac-results.sarif'
+
   build-scan-push-image:
-    needs: [lint-and-format, test, scan-repo]
+    needs: [lint-and-format, test, scan-repo, scan-infra]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -117,12 +146,12 @@ jobs:
           trivy-config: trivy.yaml
           scan-type: 'image'
           format: 'sarif'
-          output: '${{ github.workspace }}/trivy-results.sarif'
+          output: '${{ github.workspace }}/trivy-img-results.sarif'
       - name: Upload SARIF scan results to GitHub Security
         uses: github/codeql-action/upload-sarif@v4
         if: always()
         with:
-          sarif_file: '${{ github.workspace }}/trivy-results.sarif'
+          sarif_file: '${{ github.workspace }}/trivy-img-results.sarif'
       - name: Push container image
         if: success()
         uses: docker/bake-action@v6
