@@ -38,7 +38,7 @@ func healthCheckHandler(_ context.Context, _ *struct{}) (*HealthCheckResponse, e
 
 func main() {
 	cli := humacli.New(func(hooks humacli.Hooks, options *Options) {
-		InitLogger("debug")
+		InitLogger(options.LogLevel)
 
 		router := chi.NewMux()
 		router.Use(middleware.Logger)
