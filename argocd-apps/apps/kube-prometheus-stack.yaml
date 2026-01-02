@@ -9,20 +9,13 @@ metadata:
     argocd.argoproj.io/sync-wave: "1" # For dependencies ordering
 spec:
   project: default
-  source:
-    chart: kube-prometheus-stack
-    repoURL: ghcr.io/prometheus-community/charts
-    targetRevision: 80.6.0
-    helm:
-      values: |
-        alertmanager:
-          alertmanagerSpec:
-            replicas: 1
-        grafana:
-          replicas: 1
-        prometheus:
-          prometheusSpec:
-            replicas: 1
+  sources:
+    - chart: kube-prometheus-stack
+      repoURL: ghcr.io/prometheus-community/charts
+      targetRevision: 80.9.2
+    - repoURL: https://github.com/testdotcom/k8s-homelab.git
+      targetRevision: HEAD
+      path: argocd-apps/charts/monitoring
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
