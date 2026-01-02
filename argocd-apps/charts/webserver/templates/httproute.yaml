@@ -9,8 +9,8 @@ spec:
   parentRefs:
     - name: {{ .Values.gateway.name }}
       namespace: {{ .Release.Namespace }}
-  hostnames:
-    - {{ .Values.gateway.hostname | quote }}
+  #hostnames:
+  #  - {{ .Values.gateway.hostname | quote }}
   rules:
     - matches:
         - path:

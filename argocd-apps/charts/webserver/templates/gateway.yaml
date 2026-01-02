@@ -1,12 +1,5 @@
 {{- if and .Values.gateway.enabled .Values.gateway.createGateway -}}
 apiVersion: gateway.networking.k8s.io/v1
-kind: GatewayClass
-metadata:
-  name: {{ .Values.gateway.gatewayClassName }}
-spec:
-  controllerName: gateway.envoyproxy.io/gatewayclass-controller
----
-apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   name: {{ .Values.gateway.name }}
@@ -30,7 +23,7 @@ spec:
     - name: https
       protocol: HTTPS
       port: {{ .Values.gateway.tls.port }}
-      hostname: {{ .Values.gateway.hostname }}
+      #hostname: {{ .Values.gateway.hostname }}
       tls:
         mode: Terminate
         certificateRefs:

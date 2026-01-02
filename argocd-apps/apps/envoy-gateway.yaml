@@ -9,10 +9,13 @@ metadata:
     argocd.argoproj.io/sync-wave: "1" # For dependencies ordering
 spec:
   project: default
-  source:
-    chart: gateway-helm
-    repoURL: docker.io/envoyproxy
-    targetRevision: v1.6.1
+  sources:
+    - chart: gateway-helm
+      repoURL: docker.io/envoyproxy
+      targetRevision: v1.6.1
+    - repoURL: https://github.com/testdotcom/k8s-homelab.git
+      targetRevision: HEAD
+      path: argocd-apps/charts/gateway
   destination:
     server: https://kubernetes.default.svc
     namespace: envoy-gateway-system
