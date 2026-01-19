@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: metallb
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io/background  # Avoid orphaned childs
+spec:
+  project: default
+  source:
+    repoURL: https://metallb.github.io/metallb
+    chart: metallb
+    targetRevision: 0.15.3
+    helm:
+      releaseName: metallb
+      parameters:
+        - name: controller.logLevel
+          value: info
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: metallb-system
+  syncPolicy:
+    automated:  # Enable Continuos Deployment (instead of Continuos Delivery)
+      prune: true # Delete corresponding K8s resources if removed from Git
+      selfHeal: true  # Rollback manual changes (avoid config drift)
+    retry:  # Handle transient failures
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+    syncOptions:
+      - CreateNamespace=true
