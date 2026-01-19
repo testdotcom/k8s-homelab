@@ -3,16 +3,16 @@ kind: Application
 metadata:
   name: envoy-gateway
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
   finalizers:
     - resources-finalizer.argocd.argoproj.io/background  # Avoid orphaned childs
-  annotations:
-    argocd.argoproj.io/sync-wave: "1" # For dependencies ordering
 spec:
   project: default
   sources:
     - chart: gateway-helm
       repoURL: docker.io/envoyproxy
-      targetRevision: v1.6.1
+      targetRevision: v1.6.2
     - repoURL: https://github.com/testdotcom/k8s-homelab.git
       targetRevision: HEAD
       path: argocd-apps/charts/gateway
