@@ -6,7 +6,7 @@ metadata:
   finalizers:
     - resources-finalizer.argocd.argoproj.io/background  # Avoid orphaned childs
   annotations:
-    argocd.argoproj.io/sync-wave: "3" # For dependencies ordering
+    argocd.argoproj.io/sync-wave: "4"
 spec:
   project: default
   source:
