@@ -88,7 +88,7 @@ jobs:
         with:
           scan-type: 'fs'
           scan-ref: '.'
-          skip-dirs: 'iac'  # Workaround as Trivy does panic here
+          #skip-dirs: 'iac'  # Workaround as Trivy does panic here
           trivy-config: '${{ github.workspace }}/trivy.yaml'
           scanners: 'vuln,misconfig,secret'
           format: 'sarif'
