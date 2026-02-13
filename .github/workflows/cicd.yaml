@@ -76,8 +76,6 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
-        env:
-          TRIVY_DEBUG: true
         with:
           sparse-checkout: |
             iac
@@ -85,6 +83,8 @@ jobs:
             trivy.yaml
       - name: Scan IaC for vulnerabilities
         uses: aquasecurity/trivy-action@0.34.0
+        env:
+          TRIVY_DEBUG: true
         with:
           scan-type: 'fs'
           scan-ref: '.'
@@ -93,6 +93,7 @@ jobs:
           scanners: 'vuln,misconfig,secret'
           format: 'sarif'
           output: '${{ github.workspace }}/trivy-iac-results.sarif'
+          github-pat: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload SARIF scan results to GitHub Security
         uses: github/codeql-action/upload-sarif@v4
         if: always()
