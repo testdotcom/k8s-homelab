@@ -5,9 +5,9 @@ resource "aws_security_group" "k8s_worker" {
 
 resource "aws_vpc_security_group_egress_rule" "worker_allow_outbound" {
   security_group_id = aws_security_group.k8s_worker.id
-  description       = "Allow all outbound traffic"
+  description       = "Restrict egress traffic"
   ip_protocol       = "-1"
-  cidr_ipv4         = "0.0.0.0/0"
+  cidr_ipv4         = "127.0.0.1/32"
 
   tags = {
     Name = "allow-all-outbound"

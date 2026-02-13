@@ -88,12 +88,10 @@ jobs:
         with:
           scan-type: 'fs'
           scan-ref: '.'
-          #skip-dirs: 'iac'  # Workaround as Trivy does panic here
           trivy-config: '${{ github.workspace }}/trivy.yaml'
           scanners: 'vuln,misconfig,secret'
           format: 'sarif'
           output: '${{ github.workspace }}/trivy-iac-results.sarif'
-          #github-pat: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload SARIF scan results to GitHub Security
         uses: github/codeql-action/upload-sarif@v4
         if: always()
