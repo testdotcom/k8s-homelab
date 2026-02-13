@@ -9,7 +9,7 @@ resource "random_password" "cluster_token" {
 }
 
 module "ec2_cluster" {
-  source = "${path.module}/ec2_cluster"
+  source = "./ec2_cluster"
 
   cluster_name  = random_pet.cluster_name.id
   cluster_token = random_password.cluster_token.result
