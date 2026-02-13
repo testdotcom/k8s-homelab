@@ -59,7 +59,7 @@ jobs:
             webserver
             trivy.yaml
       - name: Scan repository for vulnerabilities (generate SBOM)
-        uses: aquasecurity/trivy-action@0.33.1
+        uses: aquasecurity/trivy-action@0.34.0
         with:
           scan-type: 'fs'
           scan-ref: 'webserver'
@@ -84,7 +84,7 @@ jobs:
             argocd-apps
             trivy.yaml
       - name: Scan IaC for vulnerabilities
-        uses: aquasecurity/trivy-action@0.33.1
+        uses: aquasecurity/trivy-action@0.34.0
         with:
           scan-type: 'fs'
           scan-ref: '.'
@@ -146,7 +146,7 @@ jobs:
           set: |
             *.output=type=docker
       - name: Scan container image for vulnerabilities
-        uses: aquasecurity/trivy-action@0.33.1
+        uses: aquasecurity/trivy-action@0.34.0
         env:
           TRIVY_DEBUG: true
         with:
