@@ -44,7 +44,7 @@ gateway:
   enabled: true
   createGateway: true
   name: "webserver-gateway"
-  gatewayClassName: "eg" 
+  gatewayClassName: "cilium" 
   hostname: "webserver.local"
   port: 8888
 
