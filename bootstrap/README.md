@@ -18,7 +18,11 @@ systemctl restart rke2-server.service
 Instead for a minikube node, disable the default CNI and then install cilium CNI:
 
 ```sh
-minikube start --cni=false \
+minikube start --kubernetes-version=latest \
+	--memory=8192 \
+	--cpus=2 \
+	--static-ip=192.168.0.42 \
+	--cni=false \
     --extra-config=kubeadm.skip-phases=addon/kube-proxy \
     --addons=metrics-server
 
