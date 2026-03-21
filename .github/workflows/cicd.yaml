@@ -21,7 +21,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v9
         with:
-          version: v2.9.0
+          version: v2.11.3
           working-directory: webserver
 
   test:
@@ -59,7 +59,7 @@ jobs:
             webserver
             trivy.yaml
       - name: Scan repository for vulnerabilities (generate SBOM)
-        uses: aquasecurity/trivy-action@0.34.0
+        uses: aquasecurity/trivy-action@v0.35.0
         with:
           scan-type: 'fs'
           scan-ref: 'webserver'
@@ -82,7 +82,7 @@ jobs:
             argocd-apps
             trivy.yaml
       - name: Scan IaC for vulnerabilities
-        uses: aquasecurity/trivy-action@0.34.0
+        uses: aquasecurity/trivy-action@v0.35.0
         env:
           TRIVY_DEBUG: true
         with:
@@ -145,7 +145,7 @@ jobs:
           set: |
             *.output=type=docker
       - name: Scan container image for vulnerabilities
-        uses: aquasecurity/trivy-action@0.34.0
+        uses: aquasecurity/trivy-action@v0.35.0
         env:
           TRIVY_DEBUG: true
         with:
