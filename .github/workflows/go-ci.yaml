@@ -1,0 +1,48 @@
+name: Go CI
+on:
+  workflow_call:
+    inputs:
+      working-directory:
+        description: Directory containing the Go module.
+        type: string
+        required: true
+      golangci-lint-version:
+        type: string
+        default: v2.15.0
+
+permissions: {}
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - &checkout
+        name: Check out repository
+        uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: ${{ inputs.working-directory }}
+      - &setup-go
+        name: Setup Go
+        uses: actions/setup-go@v7.1.0
+        with:
+          go-version-file: ${{ inputs.working-directory }}/go.mod
+          cache-dependency-path: ${{ inputs.working-directory }}/go.sum
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v9.3.0
+        with:
+          version: ${{ inputs.golangci-lint-version }}
+          working-directory: ${{ inputs.working-directory }}
+
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - *checkout
+      - *setup-go
+      - name: Run Go tests with coverage
+        working-directory: ${{ inputs.working-directory }}
+        run: go test -cover ./...

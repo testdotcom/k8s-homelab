@@ -1,171 +1,39 @@
 name: CICD pipeline
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  lint-and-format:
-    runs-on: ubuntu-latest
+  go-ci:
     permissions:
       contents: read
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v7.0.1
-        with:
-          sparse-checkout: |
-            webserver
-      - name: Setup Go
-        uses: actions/setup-go@v7.1.0
-        with:
-          go-version-file: "webserver/go.mod"
-          cache-dependency-path: "webserver/go.sum"
-          cache: true
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v9.3.0
-        with:
-          version: v2.15.0
-          working-directory: webserver
+    uses: ./.github/workflows/go-ci.yaml
+    with:
+      working-directory: webserver
 
-  test:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v7.0.1
-        with:
-          sparse-checkout: |
-            webserver
-      - name: Setup Go
-        uses: actions/setup-go@v7.1.0
-        with:
-          go-version-file: "webserver/go.mod"
-          cache-dependency-path: "webserver/go.sum"
-          cache: true
-      - name: Run Go test coverage
-        working-directory: webserver
-        run: go test -cover ./...
-
-  scan-repo:
-    runs-on: ubuntu-latest
+  security-scan:
     permissions:
       contents: write
       security-events: write
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v7.0.1
-        #env:
-        #  TRIVY_DEBUG: true
-        with:
-          sparse-checkout: |
-            webserver
-            trivy.yaml
-      - name: Scan repository for vulnerabilities (generate SBOM)
-        uses: aquasecurity/trivy-action@v0.36.0
-        with:
-          scan-type: "fs"
-          scan-ref: "webserver"
-          trivy-config: "${{ github.workspace }}/trivy.yaml"
-          format: "github"
-          output: "${{ github.workspace }}/dependency-results.sbom.json"
-          github-pat: ${{ secrets.GITHUB_TOKEN }}
+    uses: ./.github/workflows/security-scan.yaml
+    with:
+      app-path: webserver
+      iac-paths: |
+        iac
+        argocd-apps
 
-  scan-infra:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      security-events: write
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v7.0.1
-        with:
-          sparse-checkout: |
-            iac
-            argocd-apps
-            trivy.yaml
-      - name: Scan IaC for vulnerabilities
-        uses: aquasecurity/trivy-action@v0.36.0
-        #env:
-        #  TRIVY_DEBUG: true
-        with:
-          scan-type: "fs"
-          scan-ref: "."
-          trivy-config: "${{ github.workspace }}/trivy.yaml"
-          scanners: "vuln,misconfig,secret"
-          format: "sarif"
-          output: "${{ github.workspace }}/trivy-iac-results.sarif"
-      - name: Upload SARIF scan results to GitHub Security
-        uses: github/codeql-action/upload-sarif@v4.36.2
-        if: always()
-        with:
-          sarif_file: "${{ github.workspace }}/trivy-iac-results.sarif"
-
-  build-scan-push-image:
-    needs: [lint-and-format, test, scan-repo, scan-infra]
-    runs-on: ubuntu-latest
+  container:
+    needs: [go-ci, security-scan]
     permissions:
       contents: read
       packages: write
       security-events: write
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v7.0.1
-        with:
-          sparse-checkout: |
-            webserver
-            trivy.yaml
-      - name: Login to registry
-        uses: docker/login-action@v4.8.0
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Set up Buildx
-        uses: docker/setup-buildx-action@v4.4.1
-      - name: Container image metadata
-        uses: docker/metadata-action@v6.2.0
-        id: meta
-        with:
-          images: ghcr.io/testdotcom/webserver
-          tags: |
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=sha
-      - name: Build container image
-        uses: docker/bake-action@v7.5.0
-        id: build
-        with:
-          push: false
-          load: true
-          workdir: webserver
-          source: "{{defaultContext}}:webserver"
-          files: |
-            ./docker-bake.hcl
-            cwd://${{ steps.meta.outputs.bake-file-tags }}
-          targets: build
-          set: |
-            *.output=type=docker
-      - name: Scan container image for vulnerabilities
-        uses: aquasecurity/trivy-action@v0.36.0
-        #env:
-        #  TRIVY_DEBUG: true
-        with:
-          image-ref: "ghcr.io/testdotcom/webserver:latest"
-          scan-type: "image"
-          trivy-config: "${{ github.workspace }}/trivy.yaml"
-          format: "sarif"
-          output: "${{ github.workspace }}/trivy-img-results.sarif"
-      - name: Upload SARIF scan results to GitHub Security
-        uses: github/codeql-action/upload-sarif@v4.36.2
-        if: always()
-        with:
-          sarif_file: "${{ github.workspace }}/trivy-img-results.sarif"
-      - name: Push container image
-        if: success()
-        uses: docker/bake-action@v7.5.0
-        with:
-          push: true
-          workdir: webserver
-          source: "{{defaultContext}}:webserver"
-          files: |
-            ./docker-bake.hcl
-            cwd://${{ steps.meta.outputs.bake-file-tags }}
-          targets: build
+    uses: ./.github/workflows/container.yaml
+    with:
+      context: webserver
+      image: ghcr.io/testdotcom/webserver

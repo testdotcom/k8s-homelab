@@ -1,0 +1,64 @@
+name: Security scan
+on:
+  workflow_call:
+    inputs:
+      app-path:
+        description: Application source to scan for dependency vulnerabilities.
+        type: string
+        required: true
+      iac-paths:
+        description: Newline-separated IaC/manifest directories to scan.
+        type: string
+        required: true
+      trivy-config:
+        type: string
+        default: trivy.yaml
+
+permissions: {}
+
+jobs:
+  scan-repo:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            ${{ inputs.app-path }}
+            ${{ inputs.trivy-config }}
+      - name: Scan dependencies and submit snapshot
+        uses: aquasecurity/trivy-action@v0.36.0
+        #env:
+        #  TRIVY_DEBUG: true
+        with:
+          scan-type: fs
+          scan-ref: ${{ inputs.app-path }}
+          trivy-config: ${{ github.workspace }}/${{ inputs.trivy-config }}
+          format: github
+          output: ${{ github.workspace }}/dependency-results.sbom.json
+          github-pat: ${{ secrets.GITHUB_TOKEN }}
+
+  scan-infra:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            .github/actions
+            ${{ inputs.iac-paths }}
+            ${{ inputs.trivy-config }}
+      - name: Scan IaC for vulnerabilities
+        uses: ./.github/actions/trivy-sarif
+        with:
+          category: trivy-iac
+          scan-type: fs
+          scanners: vuln,misconfig,secret
+          trivy-config: ${{ inputs.trivy-config }}
