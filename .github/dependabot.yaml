@@ -4,3 +4,19 @@ updates:
     directory: "/webserver"
     schedule:
       interval: "weekly"
+
+  - package-ecosystem: "docker"
+    directory: "/webserver"
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "github-actions" 
+    directories:
+      - "/"
+      - "/.github/actions/*"
+    schedule:
+      interval: "weekly"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
