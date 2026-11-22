@@ -1,19 +1,15 @@
 module github.com/testdotcom/k8s-homelab
 
-go 1.26.1
+go 1.27.4
 
 require (
-	github.com/go-chi/chi v1.5.5
-	github.com/go-chi/chi/v5 v5.4.0
+	github.com/danielgtaylor/huma/v2 v2.41.0
+	github.com/go-chi/chi/v5 v5.5.0
+	github.com/pkg/errors v0.9.1
 )
 
 require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/spf13/cobra v1.10.2 // indirect
-)
-
-require (
-	github.com/danielgtaylor/huma/v2 v2.37.2
-	github.com/pkg/errors v0.9.1
-	github.com/spf13/pflag v1.0.10 // indirect
+	github.com/spf13/pflag v1.1.0 // indirect
 )

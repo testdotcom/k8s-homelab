@@ -1,12 +1,12 @@
 # syntax=docker/dockerfile:1
-FROM golang:1.26-alpine AS builder
+FROM golang:1.27-alpine AS builder
 
 WORKDIR /app
 
 COPY . ./
 RUN --mount=type=cache,target=/go/pkg/mod \
-    # Production optimizations
-    CGO_ENABLED=0 go build -ldflags='-s -w' -o /webserver .
+  # Production optimizations
+  CGO_ENABLED=0 go build -ldflags='-s -w' -o /webserver .
 
 FROM scratch
 
